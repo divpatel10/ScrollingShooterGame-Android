@@ -12,10 +12,12 @@ public class GameEngine extends SurfaceView implements Runnable,GameStarter {
     private Thread mThread = null;
     private long mFPS;
     private GameState mGameState;
+    private SoundEngine mSoundEngine;
 
     public GameEngine(Context context, Point size) {
         super(context);
         mGameState = new GameState(this, context);
+        mSoundEngine = new SoundEngine(context);
     }
 
     @Override
@@ -23,12 +25,7 @@ public class GameEngine extends SurfaceView implements Runnable,GameStarter {
 
         while (mGameState.getThreadRunning()) {
 
-
-
             long frameStartTime = System.currentTimeMillis();
-
-
-
             long timeThisFrame = System.currentTimeMillis()
                     - frameStartTime;
 
@@ -53,6 +50,7 @@ public class GameEngine extends SurfaceView implements Runnable,GameStarter {
     public boolean onTouchEvent(MotionEvent motionEvent) {
     // Handle the player's input here
     // But in a new way
+        mSoundEngine.playShoot();
         return true;
     }
     public void stopThread() {

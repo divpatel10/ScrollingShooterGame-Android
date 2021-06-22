@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class GameEngine extends SurfaceView
-        implements Runnable,GameStarter,GameEngineBroadcaster,PlayerLaserSpawner
+        implements Runnable,GameStarter,GameEngineBroadcaster,PlayerLaserSpawner, AlienLaserSpawner
                                                         {
 
     private Thread mThread = null;
@@ -59,7 +59,7 @@ public class GameEngine extends SurfaceView
                 // Update all the game objects here
                 // in a new way
 
-                // This call to update will eveolve with the project
+                // This call to update will evolve with the project
                 if(mPhysicsEngine.update(mFPS,objects,
                         mGameState,
                         mSoundEngine, mParticleSystem)){
@@ -128,6 +128,12 @@ public class GameEngine extends SurfaceView
                 .spawn(objects.get(Level.PLAYER_INDEX)
                         .getTransform());
 
+        for (int i = Level.FIRST_ALIEN;
+             i != Level.LAST_ALIEN + 1; i++) {
+            objects.get(i).spawn(objects
+                    .get(Level.PLAYER_INDEX).getTransform());
+        }
+
     }
 
     @Override
@@ -150,5 +156,25 @@ public class GameEngine extends SurfaceView
                         Level.FIRST_PLAYER_LASER;
             }
         }
-        return true;        }
+        return true;
+    }
+
+    @Override
+    public void spawnAlienLaser(Transform transform) {
+        ArrayList<GameObject> objects =
+                mLevel.getGameObjects();
+// Shoot laser IF AVAILABLE
+// Pass in the transform of the ship
+// that requested the shot to be fired
+        if (objects.get(Level.mNextAlienLaser
+        ).spawn(transform)) {
+            Level.mNextAlienLaser++;
+            mSoundEngine.playShoot();
+            if(Level.mNextAlienLaser ==Level.LAST_ALIEN_LASER + 1) {
+// Just used the last laser
+                Level.mNextAlienLaser =
+                        Level.FIRST_ALIEN_LASER;
+            }
+        }
+    }
 }
